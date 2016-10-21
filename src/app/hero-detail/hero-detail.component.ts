@@ -5,15 +5,33 @@ import { Location }                     from '@angular/common';
 import { Hero }                         from '../models/hero';
 import { HeroService }                  from '../services/hero.service';
 
-// you are here:
-// https://angular.io/docs/ts/latest/tutorial/toh-pt5.html#!#revise-the-herodetailcomponent-
-
 @Component({
+  //moduleId: module.id, // this is causing an error - TODO: find out why.
   selector: 'my-hero-detail',
-  templateUrl: './hero-detail.component.html'
+  templateUrl: './hero-detail.component.html',
+  styleUrls: ['./hero-detail.component.scss']
 })
 
-export class HeroDetailComponent {
+export class HeroDetailComponent implements OnInit {
   @Input()
   hero: Hero;
+
+  constructor(
+    private heroService: HeroService,
+    private route: ActivatedRoute,
+    private location: Location
+  ) {}
+
+  ngOnInit(): void {
+    this.route.params.forEach((params: Params) => {
+      let id = +params['id'];
+      this.heroService.getHero(id)
+        .then(hero => this.hero = hero);
+    });
+  }
+
+  goBack(): void {
+    this.location.back();
+  }
+
 }
